@@ -64,10 +64,11 @@ class PostgresqlCommentRepository(CommentRepository):
             )
 
     def get_by_sentence(self, sentence_id: int) -> List[Comment]:
+        # Return comments ordered by newest first (id desc)
         return (
             self.session.query(Comment)
             .filter(Comment.sentence_id == sentence_id)
-            .order_by(Comment.like_count.desc())
+            .order_by(Comment.id.desc())
             .all()
         )
 
@@ -105,12 +106,18 @@ class PostgresqlCommentRepository(CommentRepository):
         )
 
         if mapping is not None:
+            # User already liked: remove mapping and decrement like_count
+            comment = self.find(comment_id)
+            if comment and comment.like_count > 0:
+                comment.like_count = comment.like_count - 1
+                self.session.add(comment)
+
             self.session.delete(mapping)
             self.session.commit()
             return False
         
         comment = self.find(comment_id)
-        comment.like_count = comment.like_count + 1
+        comment.like_count = (comment.like_count or 0) + 1
         self.session.add(comment)
 
         new_mapping = CommentLikeUserMap(comment_id=comment_id, user_id=user_id)

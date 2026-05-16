@@ -37,6 +37,15 @@ class PostService:
             if s.strip()
         ]
 
+        # Ensure the referenced book exists; create a placeholder if missing.
+        existing_book = self.book_repository.find(bookId)
+        if existing_book is None:
+            try:
+                self.book_repository.create({"id": bookId, "name": f"AutoBook {bookId}", "author_id": None})
+            except Exception:
+                # best-effort: if explicit id insert fails, continue and let DB raise on commit
+                pass
+
         for sentence in split_sentences:
             saved = self.sentence_repository.create({
                 "chapter": chapter,

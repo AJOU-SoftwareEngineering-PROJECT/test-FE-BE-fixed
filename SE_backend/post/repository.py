@@ -68,6 +68,18 @@ class PostgresqlSentenceRepository(SentenceRepository):
         return self.session.get(Sentence, id)
 
     def create(self, post_data: dict) -> Sentence:
+        # Ensure the referenced book exists when DB enforces FK constraints
+        book_id = post_data.get("book_id")
+        if book_id is not None:
+            existing = self.session.get(Book, book_id)
+            if existing is None:
+                try:
+                    placeholder = Book(id=book_id, name=f"AutoBook {book_id}", author_id=None)
+                    self.session.add(placeholder)
+                    self.session.commit()
+                except Exception:
+                    self.session.rollback()
+
         sentence = Sentence(**post_data)
         self.session.add(sentence)
         self.session.commit()

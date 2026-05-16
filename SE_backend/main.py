@@ -1,5 +1,10 @@
+import os
+import sys
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Ensure this file's directory is on sys.path so internal imports work
+sys.path.insert(0, os.path.dirname(__file__))
 
 from author.controller import router as author_router
 from comment.controller import router as comment_router, subcomment_router

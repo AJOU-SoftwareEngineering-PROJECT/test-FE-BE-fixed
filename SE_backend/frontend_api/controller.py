@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Optional
-
+import hashlib
+from urllib.parse import urlencode
+from urllib.request import urlopen, Request
+import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
@@ -37,7 +40,26 @@ class FrontScrap(Base):
     sentence_content = Column(Text, nullable=False)
     book_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+class FrontPlaylist(Base):
+    __tablename__ = "frontend_playlists"
 
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    creator_name = Column(String(100), nullable=False, default="Guest User")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class FrontPlaylistSong(Base):
+    __tablename__ = "frontend_playlist_songs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    playlist_id = Column(Integer, ForeignKey("frontend_playlists.id"), nullable=False)
+    title = Column(String(255), nullable=False)
+    artist = Column(String(255), nullable=False)
+    url = Column(Text, nullable=True)
+    like_count = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
 def create_frontend_tables():
     Base.metadata.create_all(bind=engine)
@@ -46,6 +68,37 @@ def create_frontend_tables():
 # =========================
 # Schemas
 # =========================
+class FrontMusicSearchItem(BaseModel):
+    title: str
+    artist: str
+    album: Optional[str] = ""
+    preview_url: Optional[str] = ""
+    artwork_url: Optional[str] = ""
+    track_url: Optional[str] = ""
+class FrontLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class FrontPasswordUpdate(BaseModel):
+    old_password: str
+    new_password: str
+class FrontRegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    gender: str = "MALE"
+    age: int = 20
+    intro: Optional[str] = ""
+
+
+class FrontLoginResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    gender: str
+    age: int
+    intro: Optional[str] = None
+
 
 class FrontBookCreate(BaseModel):
     name: str
@@ -205,7 +258,39 @@ class FrontMyPageResponse(BaseModel):
     books: list[FrontBookResponse]
     scraps: list[FrontScrapResponse]
     comments: list[FrontCommentResponse]
+class FrontPlaylistCreate(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    creator_name: str = "Guest User"
 
+
+class FrontPlaylistSongCreate(BaseModel):
+    title: str
+    artist: str
+    url: Optional[str] = ""
+
+
+class FrontPlaylistSongResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    playlist_id: int
+    title: str
+    artist: str
+    url: Optional[str] = None
+    like_count: int
+    created_at: datetime
+
+
+class FrontPlaylistResponse(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    creator_name: str
+    song_count: int = 0
+    total_likes: int = 0
+    created_at: datetime
+    songs: list[FrontPlaylistSongResponse] = Field(default_factory=list)
 
 # =========================
 # Helpers
@@ -223,7 +308,22 @@ def parse_gender(value: str):
     return Gender.MALE
 
 
-def get_current_front_user(db: Session):
+def hash_password(password: str):
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def verify_password(password: str, password_hash: Optional[str]):
+    if not password_hash:
+        return False
+    return hash_password(password) == password_hash
+
+
+def get_current_front_user(db: Session, user_id: Optional[int] = None):
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            return user
+
     user = db.query(User).order_by(User.id.asc()).first()
 
     if not user:
@@ -233,13 +333,24 @@ def get_current_front_user(db: Session):
             age=20,
             intro="This is a default user profile.",
             email="guest@frontend.local",
+            password_hash=hash_password("1234"),
         )
-
         db.add(user)
         db.commit()
         db.refresh(user)
 
     return user
+
+
+def make_login_response(user: User):
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "gender": gender_to_string(user.gender),
+        "age": user.age,
+        "intro": user.intro,
+    }
 
 
 def make_author_response(author: User, db: Session):
@@ -268,12 +379,87 @@ def make_book_response(book: Book, author_name: str = "Unknown Author"):
 
 
 # =========================
+# Auth / Login
+# =========================
+
+@router.get("/auth/users", response_model=list[FrontLoginResponse])
+def get_login_users(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(User.id.desc()).all()
+    return [make_login_response(user) for user in users]
+
+
+@router.post("/auth/login", response_model=FrontLoginResponse)
+def login(dto: FrontLoginRequest, db: Session = Depends(get_db)):
+    email = dto.email.strip()
+    password = dto.password.strip()
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid password")
+
+    return make_login_response(user)
+
+
+@router.post(
+    "/auth/register",
+    response_model=FrontLoginResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def register(dto: FrontRegisterRequest, db: Session = Depends(get_db)):
+    name = dto.name.strip()
+    email = dto.email.strip()
+    password = dto.password.strip()
+
+    if not name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+
+    if len(password) < 4:
+        raise HTTPException(status_code=400, detail="Password must be at least 4 characters")
+
+    existing = db.query(User).filter(User.email == email).first()
+
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already exists")
+
+    user = User(
+        name=name,
+        email=email,
+        password_hash=hash_password(password),
+        gender=parse_gender(dto.gender),
+        age=dto.age,
+        intro=dto.intro or "",
+    )
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    return make_login_response(user)
+
+
+# =========================
 # My Page
 # =========================
 
 @router.get("/me", response_model=FrontMyPageResponse)
-def get_my_page(db: Session = Depends(get_db)):
-    user = get_current_front_user(db)
+def get_my_page(user_id: Optional[int] = None, db: Session = Depends(get_db)):
+    user = get_current_front_user(db, user_id)
 
     books = (
         db.query(Book)
@@ -297,10 +483,7 @@ def get_my_page(db: Session = Depends(get_db)):
         .all()
     )
 
-    book_items = [
-        make_book_response(book, user.name)
-        for book in books
-    ]
+    book_items = [make_book_response(book, user.name) for book in books]
 
     activities = []
 
@@ -316,7 +499,6 @@ def get_my_page(db: Session = Depends(get_db)):
 
     for comment in comments[:3]:
         preview = comment.content[:70] + "..." if len(comment.content) > 70 else comment.content
-
         activities.append(
             {
                 "type": "comment",
@@ -328,7 +510,6 @@ def get_my_page(db: Session = Depends(get_db)):
 
     for scrap in scraps[:3]:
         preview = scrap.sentence_content[:70] + "..." if len(scrap.sentence_content) > 70 else scrap.sentence_content
-
         activities.append(
             {
                 "type": "scrap",
@@ -368,8 +549,12 @@ def get_my_page(db: Session = Depends(get_db)):
 
 
 @router.put("/me", response_model=FrontMyPageProfile)
-def update_my_page(dto: FrontMyPageUpdate, db: Session = Depends(get_db)):
-    user = get_current_front_user(db)
+def update_my_page(
+    dto: FrontMyPageUpdate,
+    user_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    user = get_current_front_user(db, user_id)
 
     name = dto.name.strip()
     email = dto.email.strip()
@@ -419,7 +604,37 @@ def update_my_page(dto: FrontMyPageUpdate, db: Session = Depends(get_db)):
         "comment_count": comment_count,
         "scrap_count": scrap_count,
     }
+@router.put("/me/password")
+def update_my_password(
+    dto: FrontPasswordUpdate,
+    user_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    user = get_current_front_user(db, user_id)
 
+    old_password = dto.old_password.strip()
+    new_password = dto.new_password.strip()
+
+    if not old_password:
+        raise HTTPException(status_code=400, detail="Old password is required")
+
+    if not new_password:
+        raise HTTPException(status_code=400, detail="New password is required")
+
+    if len(new_password) < 4:
+        raise HTTPException(
+            status_code=400,
+            detail="New password must be at least 4 characters",
+        )
+
+    if not verify_password(old_password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Old password is incorrect")
+
+    user.password_hash = hash_password(new_password)
+
+    db.commit()
+
+    return {"message": "Password updated successfully"}
 
 # =========================
 # Authors
@@ -431,7 +646,11 @@ def get_authors(db: Session = Depends(get_db)):
     return [make_author_response(author, db) for author in authors]
 
 
-@router.post("/authors", response_model=FrontAuthorResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/authors",
+    response_model=FrontAuthorResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_author(dto: FrontAuthorCreate, db: Session = Depends(get_db)):
     name = dto.name.strip()
     email = dto.email.strip()
@@ -453,6 +672,7 @@ def create_author(dto: FrontAuthorCreate, db: Session = Depends(get_db)):
         age=dto.age,
         intro=dto.intro or "",
         email=email,
+        password_hash=hash_password("1234"),
     )
 
     db.add(author)
@@ -476,10 +696,7 @@ def get_author_detail(author_id: int, db: Session = Depends(get_db)):
         .all()
     )
 
-    book_items = [
-        make_book_response(book, author.name)
-        for book in books
-    ]
+    book_items = [make_book_response(book, author.name) for book in books]
 
     return {
         "id": author.id,
@@ -554,7 +771,11 @@ def delete_author(author_id: int, db: Session = Depends(get_db)):
 # Books
 # =========================
 
-@router.post("/books", response_model=FrontBookResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/books",
+    response_model=FrontBookResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_book(dto: FrontBookCreate, db: Session = Depends(get_db)):
     book_name = dto.name.strip()
     author_name = dto.author_name.strip()
@@ -576,6 +797,7 @@ def create_book(dto: FrontBookCreate, db: Session = Depends(get_db)):
             age=20,
             intro=f"{author_name} is a frontend-created author.",
             email=email,
+            password_hash=hash_password("1234"),
         )
 
         db.add(author)
@@ -619,10 +841,7 @@ def get_books(db: Session = Depends(get_db)):
         .all()
     )
 
-    return [
-        make_book_response(book, author_name)
-        for book, author_name in rows
-    ]
+    return [make_book_response(book, author_name) for book, author_name in rows]
 
 
 @router.get("/books/{book_id}", response_model=FrontBookResponse)
@@ -772,7 +991,11 @@ def get_scraps(db: Session = Depends(get_db)):
     )
 
 
-@router.post("/scraps", response_model=FrontScrapResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/scraps",
+    response_model=FrontScrapResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_scrap(dto: FrontScrapCreate, db: Session = Depends(get_db)):
     sentence = db.query(Sentence).filter(Sentence.id == dto.sentence_id).first()
 
@@ -818,8 +1041,229 @@ def delete_scrap(scrap_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Scrap deleted"}
+# =========================
+# Music Search API - iTunes
+# =========================
+
+@router.get("/music/search", response_model=list[FrontMusicSearchItem])
+def search_music(q: str, limit: int = 10):
+    keyword = q.strip()
+
+    if not keyword:
+        return []
+
+    params = urlencode(
+        {
+            "term": keyword,
+            "country": "US",
+            "media": "music",
+            "entity": "song",
+            "limit": max(1, min(limit, 20)),
+        }
+    )
+
+    url = f"https://itunes.apple.com/search?{params}"
+
+    try:
+        request = Request(
+            url,
+            headers={
+                "User-Agent": "InteractiveReader/1.0",
+            },
+        )
+
+        with urlopen(request, timeout=10) as response:
+            raw = response.read().decode("utf-8")
+            data = json.loads(raw)
+
+        results = data.get("results", [])
+
+        items = []
+
+        for item in results:
+            preview_url = item.get("previewUrl") or ""
+
+            if not preview_url:
+                continue
+
+            items.append(
+                {
+                    "title": item.get("trackName") or "Unknown Title",
+                    "artist": item.get("artistName") or "Unknown Artist",
+                    "album": item.get("collectionName") or "",
+                    "preview_url": preview_url,
+                    "artwork_url": item.get("artworkUrl100") or "",
+                    "track_url": item.get("trackViewUrl") or "",
+                }
+            )
+
+        return items
+
+    except Exception as error:
+        print("Music search failed:", error)
+        raise HTTPException(
+            status_code=500,
+            detail="Music API search failed",
+        )
+# =========================
+# Playlists
+# =========================
+
+def make_playlist_response(playlist: FrontPlaylist, db: Session):
+    songs = (
+        db.query(FrontPlaylistSong)
+        .filter(FrontPlaylistSong.playlist_id == playlist.id)
+        .order_by(FrontPlaylistSong.created_at.desc())
+        .all()
+    )
+
+    total_likes = sum(song.like_count for song in songs)
+
+    return {
+        "id": playlist.id,
+        "title": playlist.title,
+        "description": playlist.description,
+        "creator_name": playlist.creator_name,
+        "song_count": len(songs),
+        "total_likes": total_likes,
+        "created_at": playlist.created_at,
+        "songs": songs,
+    }
 
 
+@router.get("/playlists", response_model=list[FrontPlaylistResponse])
+def get_playlists(db: Session = Depends(get_db)):
+    playlists = (
+        db.query(FrontPlaylist)
+        .order_by(FrontPlaylist.created_at.desc())
+        .all()
+    )
+
+    return [make_playlist_response(playlist, db) for playlist in playlists]
+
+
+@router.post(
+    "/playlists",
+    response_model=FrontPlaylistResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_playlist(dto: FrontPlaylistCreate, db: Session = Depends(get_db)):
+    title = dto.title.strip()
+
+    if not title:
+        raise HTTPException(status_code=400, detail="Playlist title is required")
+
+    playlist = FrontPlaylist(
+        title=title,
+        description=dto.description or "",
+        creator_name=dto.creator_name or "Guest User",
+    )
+
+    db.add(playlist)
+    db.commit()
+    db.refresh(playlist)
+
+    return make_playlist_response(playlist, db)
+
+
+@router.post(
+    "/playlists/{playlist_id}/songs",
+    response_model=FrontPlaylistSongResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_playlist_song(
+    playlist_id: int,
+    dto: FrontPlaylistSongCreate,
+    db: Session = Depends(get_db),
+):
+    playlist = (
+        db.query(FrontPlaylist)
+        .filter(FrontPlaylist.id == playlist_id)
+        .first()
+    )
+
+    if not playlist:
+        raise HTTPException(status_code=404, detail="Playlist not found")
+
+    title = dto.title.strip()
+    artist = dto.artist.strip()
+
+    if not title:
+        raise HTTPException(status_code=400, detail="Song title is required")
+
+    if not artist:
+        raise HTTPException(status_code=400, detail="Artist is required")
+
+    song = FrontPlaylistSong(
+        playlist_id=playlist_id,
+        title=title,
+        artist=artist,
+        url=dto.url or "",
+        like_count=0,
+    )
+
+    db.add(song)
+    db.commit()
+    db.refresh(song)
+
+    return song
+
+
+@router.post("/playlist-songs/{song_id}/like", response_model=FrontPlaylistSongResponse)
+def like_playlist_song(song_id: int, db: Session = Depends(get_db)):
+    song = (
+        db.query(FrontPlaylistSong)
+        .filter(FrontPlaylistSong.id == song_id)
+        .first()
+    )
+
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+
+    song.like_count += 1
+
+    db.commit()
+    db.refresh(song)
+
+    return song
+
+
+@router.delete("/playlist-songs/{song_id}")
+def delete_playlist_song(song_id: int, db: Session = Depends(get_db)):
+    song = (
+        db.query(FrontPlaylistSong)
+        .filter(FrontPlaylistSong.id == song_id)
+        .first()
+    )
+
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+
+    db.delete(song)
+    db.commit()
+
+    return {"message": "Song deleted"}
+
+
+@router.delete("/playlists/{playlist_id}")
+def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
+    playlist = (
+        db.query(FrontPlaylist)
+        .filter(FrontPlaylist.id == playlist_id)
+        .first()
+    )
+
+    if not playlist:
+        raise HTTPException(status_code=404, detail="Playlist not found")
+
+    db.query(FrontPlaylistSong).filter(
+        FrontPlaylistSong.playlist_id == playlist_id
+    ).delete()
+
+    db.delete(playlist)
+    db.commit()
+
+    return {"message": "Playlist deleted"}
 # =========================
 # Dashboard
 # =========================
@@ -934,5 +1378,4 @@ def get_dashboard(db: Session = Depends(get_db)):
     }
 
 
-# Create frontend extra tables automatically
 create_frontend_tables()

@@ -1,5 +1,9 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
 
+function getCurrentUserId() {
+  return localStorage.getItem("currentUserId");
+}
+
 export async function request(path, options = {}) {
   const url = `${API_BASE_URL}${path}`;
 
@@ -22,6 +26,28 @@ export async function request(path, options = {}) {
   }
 
   return JSON.parse(text);
+}
+
+/* Auth */
+export function getLoginUsers() {
+  return request("/api/auth/users");
+}
+
+export function loginUser(email, password) {
+  return request("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+}
+
+export function registerUser(data) {
+  return request("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 /* Dashboard */
@@ -63,11 +89,13 @@ export function getSentenceComments(sentenceId) {
 }
 
 export function createSentenceComment(sentenceId, content) {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
   return request(`/api/sentences/${sentenceId}/comments`, {
     method: "POST",
     body: JSON.stringify({
       content,
-      user_name: "Guest User",
+      user_name: currentUser.name || "Guest User",
     }),
   });
 }
@@ -129,11 +157,72 @@ export function deleteAuthor(authorId) {
 
 /* My Page */
 export function getMyPage() {
-  return request("/api/me");
+  const userId = getCurrentUserId();
+  const query = userId ? `?user_id=${userId}` : "";
+
+  return request(`/api/me${query}`);
 }
 
 export function updateMyPage(data) {
-  return request("/api/me", {
+  const userId = getCurrentUserId();
+  const query = userId ? `?user_id=${userId}` : "";
+
+  return request(`/api/me${query}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+/* Playlists */
+export function getPlaylists() {
+  return request("/api/playlists");
+}
+
+export function createPlaylist(data) {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
+  return request("/api/playlists", {
+    method: "POST",
+    body: JSON.stringify({
+      title: data.title,
+      description: data.description,
+      creator_name: currentUser.name || "Guest User",
+    }),
+  });
+}
+
+export function addPlaylistSong(playlistId, data) {
+  return request(`/api/playlists/${playlistId}/songs`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function likePlaylistSong(songId) {
+  return request(`/api/playlist-songs/${songId}/like`, {
+    method: "POST",
+  });
+}
+
+export function deletePlaylistSong(songId) {
+  return request(`/api/playlist-songs/${songId}`, {
+    method: "DELETE",
+  });
+}
+
+export function deletePlaylist(playlistId) {
+  return request(`/api/playlists/${playlistId}`, {
+    method: "DELETE",
+  });
+}
+/* Music Search API */
+export function searchMusic(keyword) {
+  return request(`/api/music/search?q=${encodeURIComponent(keyword)}&limit=10`);
+}
+export function updateMyPassword(data) {
+  const userId = localStorage.getItem("currentUserId");
+  const query = userId ? `?user_id=${userId}` : "";
+
+  return request(`/api/me/password${query}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });

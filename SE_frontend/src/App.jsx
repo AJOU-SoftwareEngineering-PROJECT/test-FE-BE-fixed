@@ -1,39 +1,184 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import Login from "./pages/Login";
+
+import Settings from "./pages/Settings";
 
 import Dashboard from "./pages/Dashboard";
 import Books from "./pages/Books";
-import MyPage from "./pages/MyPage";
-import Reader from "./pages/Reader";
-import Playlists from "./pages/Playlists";
-import Scraps from "./pages/Scraps";
 import CreateBook from "./pages/CreateBook";
-
+import Reader from "./pages/Reader";
 
 import Authors from "./pages/Authors";
 import CreateAuthor from "./pages/CreateAuthor";
 import AuthorDetail from "./pages/AuthorDetail";
 
+import MyPage from "./pages/MyPage";
+import Scraps from "./pages/Scraps";
+import Playlists from "./pages/Playlists";
+
+function isLoggedIn() {
+  return Boolean(localStorage.getItem("currentUserId"));
+}
+
+function ProtectedRoute({ children }) {
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
+function PublicRoute({ children }) {
+  if (isLoggedIn()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
 
-        <Route path="/books" element={<Books />} />
-        <Route path="/books/new" element={<CreateBook />} />
-        <Route path="/books/:bookId" element={<Reader />} />
+        <Route
+          path="/"
+          element={
+            isLoggedIn() ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
 
-        <Route path="/author" element={<Navigate to="/authors" replace />} />
-        <Route path="/authors" element={<Authors />} />
-        <Route path="/authors/new" element={<CreateAuthor />} />
-        <Route path="/authors/:authorId" element={<AuthorDetail />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/mypage" element={<MyPage />} />
-<Route path="/my-page" element={<MyPage />} />
-<Route path="/my" element={<MyPage />} />
-        <Route path="/scraps" element={<Scraps />} />
-        <Route path="/playlists" element={<Playlists />} />
+        <Route
+          path="/books"
+          element={
+            <ProtectedRoute>
+              <Books />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/books/new"
+          element={
+            <ProtectedRoute>
+              <CreateBook />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/books/:bookId"
+          element={
+            <ProtectedRoute>
+              <Reader />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/authors"
+          element={
+            <ProtectedRoute>
+              <Authors />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/authors/new"
+          element={
+            <ProtectedRoute>
+              <CreateAuthor />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/authors/:authorId"
+          element={
+            <ProtectedRoute>
+              <AuthorDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/mypage"
+          element={
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-page"
+          element={
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my"
+          element={
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/scraps"
+          element={
+            <ProtectedRoute>
+              <Scraps />
+            </ProtectedRoute>
+          }
+        />
+        
+          <Route
+  path="/settings"
+  element={
+    <ProtectedRoute>
+      <Settings />
+    </ProtectedRoute>
+  }
+/>
+
+        <Route
+          path="/playlists"
+          element={
+            <ProtectedRoute>
+              <Playlists />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

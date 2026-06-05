@@ -83,21 +83,21 @@ export default function Books() {
                 <div
                   key={mode.title}
                   className={`card p-5 ${
-                    mode.active ? "border-blue-500 ring-1 ring-blue-100" : ""
+                    mode.active ? "border-clay-500 ring-1 ring-clay-100" : ""
                   }`}
                 >
                   <div
                     className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-4 ${
                       mode.active
-                        ? "bg-blue-50 text-blue-600"
-                        : "bg-slate-100 text-slate-500"
+                        ? "bg-clay-50 text-clay-600"
+                        : "bg-sand-100 text-sand-500"
                     }`}
                   >
                     <Icon size={21} />
                   </div>
 
                   <h4 className="font-bold">{mode.title}</h4>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <p className="text-sm text-sand-500 mt-1">
                     {mode.description}
                   </p>
                 </div>
@@ -110,27 +110,27 @@ export default function Books() {
           <div className="flex items-end justify-between mb-4">
             <div>
               <h3 className="font-black text-lg">추천 도서</h3>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-sand-500 mt-1">
                 각 문장마다 독자들의 생각을 나누고, 어울리는 음악과 함께 읽어보세요.
               </p>
             </div>
 
-            <p className="hidden md:block text-xs text-slate-400">
+            <p className="hidden md:block text-xs text-sand-400">
               {message}
             </p>
           </div>
 
           {loading ? (
-            <div className="card p-8 text-sm text-slate-500">
+            <div className="card p-8 text-sm text-sand-500">
               책 목록을 불러오는 중입니다...
             </div>
           ) : books.length === 0 ? (
             <div className="card p-8 text-center">
-              <BookOpen size={40} className="mx-auto text-slate-300 mb-4" />
-              <h4 className="font-bold text-slate-700">
+              <BookOpen size={40} className="mx-auto text-sand-300 mb-4" />
+              <h4 className="font-bold text-sand-700">
                 아직 등록된 책이 없습니다.
               </h4>
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-sm text-sand-500 mt-2">
                 New Book 버튼을 눌러 책을 추가하세요.
               </p>
             </div>
@@ -145,17 +145,17 @@ export default function Books() {
 
         <section className="grid md:grid-cols-2 gap-5 mt-8">
           <div className="card p-6">
-            <MessageSquare className="text-blue-600" size={24} />
+            <MessageSquare className="text-clay-600" size={24} />
             <h4 className="font-bold mt-4">문장별 댓글</h4>
-            <p className="text-sm text-slate-500 mt-2 leading-6">
+            <p className="text-sm text-sand-500 mt-2 leading-6">
               독자는 각 문장마다 댓글을 남기고 다른 사용자들과 생각을 공유할 수 있습니다.
             </p>
           </div>
 
           <div className="card p-6">
-            <Music2 className="text-violet-600" size={24} />
+            <Music2 className="text-clay-600" size={24} />
             <h4 className="font-bold mt-4">음악 추천</h4>
-            <p className="text-sm text-slate-500 mt-2 leading-6">
+            <p className="text-sm text-sand-500 mt-2 leading-6">
               책 분위기에 맞는 음악을 추천하고 좋아요 순으로 확인할 수 있습니다.
             </p>
           </div>

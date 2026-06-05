@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 
 import Settings from "./pages/Settings";
 
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import Books from "./pages/Books";
 import CreateBook from "./pages/CreateBook";
 import Reader from "./pages/Reader";
@@ -15,7 +15,6 @@ import AuthorDetail from "./pages/AuthorDetail";
 
 import MyPage from "./pages/MyPage";
 import Scraps from "./pages/Scraps";
-import Playlists from "./pages/Playlists";
 
 function isLoggedIn() {
   return Boolean(localStorage.getItem("currentUserId"));
@@ -31,7 +30,7 @@ function ProtectedRoute({ children }) {
 
 function PublicRoute({ children }) {
   if (isLoggedIn()) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children;
@@ -54,7 +53,7 @@ export default function App() {
           path="/"
           element={
             isLoggedIn() ? (
-              <Navigate to="/dashboard" replace />
+              <Navigate to="/home" replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -62,12 +61,17 @@ export default function App() {
         />
 
         <Route
-          path="/dashboard"
+          path="/home"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Home />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/dashboard"
+          element={<Navigate to="/mypage?tab=dashboard" replace />}
         />
 
         <Route
@@ -171,11 +175,7 @@ export default function App() {
 
         <Route
           path="/playlists"
-          element={
-            <ProtectedRoute>
-              <Playlists />
-            </ProtectedRoute>
-          }
+          element={<Navigate to="/mypage?tab=playlists" replace />}
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

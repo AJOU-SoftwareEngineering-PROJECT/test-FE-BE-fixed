@@ -11,14 +11,14 @@ const items = [
 
 export default function MobileNav() {
   return (
-    <header className="lg:hidden sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3">
+    <header className="lg:hidden sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-sand-200 px-4 py-3">
       <div className="flex items-center justify-between">
-        <Link to="/dashboard" className="font-black text-slate-900">Interactive Reader</Link>
+        <Link to="/dashboard" className="font-black text-sand-900">Interactive Reader</Link>
         <nav className="flex items-center gap-2">
           {items.map((item) => {
             const Icon = item.icon;
             return (
-              <Link key={item.path} to={item.path} className="p-2 rounded-xl bg-slate-50 text-slate-600">
+              <Link key={item.path} to={item.path} className="p-2 rounded-xl bg-sand-50 text-sand-600">
                 <Icon size={17} />
                 <span className="sr-only">{item.label}</span>
               </Link>

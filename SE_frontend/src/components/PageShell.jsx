@@ -1,14 +1,10 @@
-import Sidebar from "./Sidebar";
-import MobileNav from "./MobileNav";
+import TopNav from "./TopNav";
 
-export default function PageShell({ children, className = "" }) {
+export default function PageShell({ children, className = "", hideTopNav = false }) {
   return (
-    <div className={`min-h-screen bg-slate-50 flex ${className}`}>
-      <Sidebar />
-      <div className="flex-1 min-w-0">
-        <MobileNav />
-        {children}
-      </div>
+    <div className={`min-h-screen bg-sand-50 ${className}`}>
+      {!hideTopNav && <TopNav />}
+      {children}
     </div>
   );
 }

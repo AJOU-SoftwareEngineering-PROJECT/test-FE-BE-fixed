@@ -74,13 +74,13 @@ export default function CreateAuthor() {
 
         <form onSubmit={handleSubmit} className="card p-6 mt-6 space-y-5">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center">
               <UserRound size={22} />
             </div>
 
             <div>
               <h3 className="font-black">Author Information</h3>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-sand-500">
                 입력한 작가 정보는 backend database에 저장됩니다.
               </p>
             </div>
@@ -93,28 +93,28 @@ export default function CreateAuthor() {
           )}
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Author Name
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               placeholder="Example: James Clear"
             />
           </div>
 
           <div className="grid md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">
+              <label className="block text-sm font-bold text-sand-700 mb-2">
                 Gender
               </label>
               <select
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+                className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 bg-white"
               >
                 <option value="MALE">MALE</option>
                 <option value="FEMALE">FEMALE</option>
@@ -122,7 +122,7 @@ export default function CreateAuthor() {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">
+              <label className="block text-sm font-bold text-sand-700 mb-2">
                 Age
               </label>
               <input
@@ -130,26 +130,26 @@ export default function CreateAuthor() {
                 type="number"
                 value={form.age}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Email
             </label>
             <input
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               placeholder="author@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Introduction
             </label>
             <textarea
@@ -157,7 +157,7 @@ export default function CreateAuthor() {
               value={form.intro}
               onChange={handleChange}
               rows={5}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 resize-none"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 resize-none"
               placeholder="Write a short introduction of the author."
             />
           </div>
@@ -166,7 +166,7 @@ export default function CreateAuthor() {
             <button
               type="button"
               onClick={() => navigate("/authors")}
-              className="px-5 py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50"
+              className="px-5 py-3 rounded-xl border border-sand-200 text-sm font-bold text-sand-600 hover:bg-sand-50"
             >
               Cancel
             </button>

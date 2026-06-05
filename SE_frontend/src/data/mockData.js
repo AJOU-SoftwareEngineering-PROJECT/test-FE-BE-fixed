@@ -30,7 +30,7 @@ export const books = [
     author: "Eleanor Hart",
     chapters: 6,
     status: "공개 중",
-    gradient: "from-blue-100 via-slate-100 to-white",
+    gradient: "from-clay-100 via-sand-100 to-white",
     description: "조용한 도시에서 서로의 문장을 발견하는 이야기",
   },
   {
@@ -39,7 +39,7 @@ export const books = [
     author: "Marcus Chen",
     chapters: 3,
     status: "공개 예정",
-    gradient: "from-violet-100 via-slate-100 to-white",
+    gradient: "from-clay-100 via-sand-100 to-white",
     description: "우주 공간에서 들려오는 작은 목소리와 선택",
   },
   {
@@ -48,7 +48,7 @@ export const books = [
     author: "Sofia Ramirez",
     chapters: 3,
     status: "공개 중",
-    gradient: "from-emerald-100 via-slate-100 to-white",
+    gradient: "from-clay-100 via-sand-100 to-white",
     description: "마지막 정원을 지키는 사람들의 따뜻한 기록",
   },
 ];

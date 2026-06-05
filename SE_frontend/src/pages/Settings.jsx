@@ -239,7 +239,7 @@ export default function Settings() {
         />
 
         {message && (
-          <div className="mb-5 rounded-2xl bg-emerald-50 text-emerald-600 px-4 py-3 text-sm flex items-center gap-2">
+          <div className="mb-5 rounded-2xl bg-clay-50 text-clay-600 px-4 py-3 text-sm flex items-center gap-2">
             <CheckCircle2 size={17} />
             {message}
           </div>
@@ -255,47 +255,47 @@ export default function Settings() {
           <div className="space-y-6">
             <form onSubmit={handleSaveProfile} className="card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center">
                   <UserRound size={22} />
                 </div>
 
                 <div>
                   <h3 className="font-black text-lg">Profile Settings</h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-sand-500">
                     DB에 저장된 사용자 정보를 수정합니다.
                   </p>
                 </div>
               </div>
 
               {profileLoading ? (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-sand-500">
                   Loading profile from DB...
                 </p>
               ) : (
                 <div className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-2">
+                      <label className="block text-xs font-bold text-sand-600 mb-2">
                         Name
                       </label>
                       <input
                         name="name"
                         value={profileForm.name}
                         onChange={handleProfileChange}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-100"
+                        className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                         placeholder="Name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-2">
+                      <label className="block text-xs font-bold text-sand-600 mb-2">
                         Email
                       </label>
                       <input
                         name="email"
                         value={profileForm.email}
                         onChange={handleProfileChange}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-100"
+                        className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                         placeholder="Email"
                       />
                     </div>
@@ -303,14 +303,14 @@ export default function Settings() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-2">
+                      <label className="block text-xs font-bold text-sand-600 mb-2">
                         Gender
                       </label>
                       <select
                         name="gender"
                         value={profileForm.gender}
                         onChange={handleProfileChange}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-100 bg-white"
+                        className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100 bg-white"
                       >
                         <option value="MALE">MALE</option>
                         <option value="FEMALE">FEMALE</option>
@@ -318,7 +318,7 @@ export default function Settings() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-2">
+                      <label className="block text-xs font-bold text-sand-600 mb-2">
                         Age
                       </label>
                       <input
@@ -326,13 +326,13 @@ export default function Settings() {
                         type="number"
                         value={profileForm.age}
                         onChange={handleProfileChange}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-100"
+                        className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-2">
+                    <label className="block text-xs font-bold text-sand-600 mb-2">
                       Introduction
                     </label>
                     <textarea
@@ -340,7 +340,7 @@ export default function Settings() {
                       value={profileForm.intro}
                       onChange={handleProfileChange}
                       rows={5}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-100 resize-none"
+                      className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100 resize-none"
                       placeholder="Short introduction"
                     />
                   </div>
@@ -348,7 +348,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white px-5 py-3 text-sm font-bold hover:bg-violet-700 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-xl bg-clay-600 text-white px-5 py-3 text-sm font-bold hover:bg-clay-700 disabled:opacity-50"
                   >
                     <Save size={17} />
                     {savingProfile ? "Saving..." : "Save Profile"}
@@ -359,13 +359,13 @@ export default function Settings() {
 
             <form onSubmit={handleSavePassword} className="card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center">
                   <ShieldCheck size={22} />
                 </div>
 
                 <div>
                   <h3 className="font-black text-lg">Password Settings</h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-sand-500">
                     현재 비밀번호 확인 후 새 비밀번호로 변경합니다.
                   </p>
                 </div>
@@ -373,7 +373,7 @@ export default function Settings() {
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-2">
+                  <label className="block text-xs font-bold text-sand-600 mb-2">
                     Current Password
                   </label>
                   <input
@@ -381,14 +381,14 @@ export default function Settings() {
                     type="password"
                     value={passwordForm.old_password}
                     onChange={handlePasswordChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                     placeholder="Current password"
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-2">
+                    <label className="block text-xs font-bold text-sand-600 mb-2">
                       New Password
                     </label>
                     <input
@@ -396,13 +396,13 @@ export default function Settings() {
                       type="password"
                       value={passwordForm.new_password}
                       onChange={handlePasswordChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                      className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                       placeholder="New password"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-2">
+                    <label className="block text-xs font-bold text-sand-600 mb-2">
                       Confirm Password
                     </label>
                     <input
@@ -410,7 +410,7 @@ export default function Settings() {
                       type="password"
                       value={passwordForm.confirm_password}
                       onChange={handlePasswordChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                      className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-clay-100"
                       placeholder="Confirm password"
                     />
                   </div>
@@ -419,7 +419,7 @@ export default function Settings() {
                 <button
                   type="submit"
                   disabled={savingPassword}
-                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 text-white px-5 py-3 text-sm font-bold hover:bg-blue-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-clay-600 text-white px-5 py-3 text-sm font-bold hover:bg-clay-700 disabled:opacity-50"
                 >
                   <ShieldCheck size={17} />
                   {savingPassword ? "Changing..." : "Change Password"}
@@ -431,13 +431,13 @@ export default function Settings() {
           <aside className="space-y-6">
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center">
                   <Palette size={22} />
                 </div>
 
                 <div>
                   <h3 className="font-black text-lg">UI Settings</h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-sand-500">
                     브라우저 localStorage에 저장됩니다.
                   </p>
                 </div>
@@ -445,14 +445,14 @@ export default function Settings() {
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-2">
+                  <label className="block text-xs font-bold text-sand-600 mb-2">
                     Appearance
                   </label>
                   <select
                     name="appearance"
                     value={uiForm.appearance}
                     onChange={handleUiChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none bg-white"
+                    className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none bg-white"
                   >
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -460,14 +460,14 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-2">
+                  <label className="block text-xs font-bold text-sand-600 mb-2">
                     Accent Color
                   </label>
                   <select
                     name="accentColor"
                     value={uiForm.accentColor}
                     onChange={handleUiChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none bg-white"
+                    className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none bg-white"
                   >
                     <option value="violet">Violet</option>
                     <option value="blue">Blue</option>
@@ -476,11 +476,11 @@ export default function Settings() {
                   </select>
                 </div>
 
-                <div className="rounded-2xl bg-slate-50 p-5">
-                  <p className="text-xs font-bold text-slate-500 mb-3">
+                <div className="rounded-2xl bg-sand-50 p-5">
+                  <p className="text-xs font-bold text-sand-500 mb-3">
                     Current Settings
                   </p>
-                  <div className="text-sm text-slate-600 space-y-2">
+                  <div className="text-sm text-sand-600 space-y-2">
                     <p>Appearance: {uiForm.appearance}</p>
                     <p>Accent: {uiForm.accentColor}</p>
                   </div>
@@ -490,7 +490,7 @@ export default function Settings() {
 
             <div className="card p-6 bg-gradient-to-r from-red-50 to-orange-50 border-red-100">
               <h3 className="font-black text-red-600 mb-2">Logout</h3>
-              <p className="text-sm text-slate-600 leading-6 mb-5">
+              <p className="text-sm text-sand-600 leading-6 mb-5">
                 로그아웃하면 localStorage의 로그인 정보가 삭제되고 Login 페이지로 이동합니다.
               </p>
 

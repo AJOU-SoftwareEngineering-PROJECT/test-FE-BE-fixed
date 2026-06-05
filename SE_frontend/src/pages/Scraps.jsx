@@ -47,16 +47,16 @@ export default function Scraps() {
         />
 
         {loading ? (
-          <div className="card p-8 text-sm text-slate-500">
+          <div className="card p-8 text-sm text-sand-500">
             스크랩을 불러오는 중입니다...
           </div>
         ) : scraps.length === 0 ? (
           <div className="card p-10 text-center">
-            <Bookmark size={42} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="font-black text-slate-700">
+            <Bookmark size={42} className="mx-auto text-sand-300 mb-4" />
+            <h3 className="font-black text-sand-700">
               저장된 문장이 없습니다.
             </h3>
-            <p className="text-sm text-slate-500 mt-2">
+            <p className="text-sm text-sand-500 mt-2">
               책을 읽으면서 문장 옆 북마크 버튼을 누르면 이곳에 표시됩니다.
             </p>
           </div>
@@ -66,15 +66,15 @@ export default function Scraps() {
               <div key={scrap.id} className="card p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs text-blue-600 font-bold">
+                    <p className="text-xs text-clay-600 font-bold">
                       {scrap.book_name}
                     </p>
 
-                    <p className="text-sm text-slate-700 leading-6 mt-3">
+                    <p className="text-sm text-sand-700 leading-6 mt-3">
                       {scrap.sentence_content}
                     </p>
 
-                    <p className="text-xs text-slate-400 mt-4">
+                    <p className="text-xs text-sand-400 mt-4">
                       Saved at {new Date(scrap.created_at).toLocaleString()}
                     </p>
                   </div>

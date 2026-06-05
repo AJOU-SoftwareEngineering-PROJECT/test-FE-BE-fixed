@@ -304,16 +304,16 @@ export default function Reader() {
       <div
         onMouseEnter={() => setShowComments(true)}
         onMouseLeave={closeCommentBox}
-        className="absolute left-0 top-full mt-2 w-[420px] max-w-[90vw] bg-white border border-slate-200 shadow-xl rounded-xl z-50 overflow-hidden"
+        className="absolute left-0 top-full mt-2 w-[420px] max-w-[90vw] bg-white border border-sand-200 shadow-xl rounded-xl z-50 overflow-hidden"
       >
-        <div className="px-4 py-3 border-b border-slate-100 flex items-start justify-between gap-3">
+        <div className="px-4 py-3 border-b border-sand-100 flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
               <MessageCircle size={17} />
               <h3 className="text-sm font-bold">Sentence Comments</h3>
             </div>
 
-            <p className="text-xs text-slate-400 mt-2 line-clamp-2">
+            <p className="text-xs text-sand-400 mt-2 line-clamp-2">
               {sentence.content}
             </p>
 
@@ -324,7 +324,7 @@ export default function Reader() {
 
           <button
             onClick={() => setShowComments(false)}
-            className="text-xs text-slate-400 hover:text-slate-700"
+            className="text-xs text-sand-400 hover:text-sand-700"
           >
             Close
           </button>
@@ -332,38 +332,38 @@ export default function Reader() {
 
         <div className="max-h-72 overflow-y-auto">
           {comments.length === 0 ? (
-            <div className="px-4 py-6 text-sm text-slate-500">
+            <div className="px-4 py-6 text-sm text-sand-500">
               아직 댓글이 없습니다. 첫 댓글을 작성해보세요.
             </div>
           ) : (
             comments.map((comment) => (
               <div
                 key={comment.id}
-                className="px-4 py-3 border-b border-slate-100 flex items-start gap-3"
+                className="px-4 py-3 border-b border-sand-100 flex items-start gap-3"
               >
-                <MessageCircle size={18} className="mt-1 text-slate-700" />
+                <MessageCircle size={18} className="mt-1 text-sand-700" />
 
                 <div className="flex-1">
                   <p className="font-semibold text-sm">
                     {comment.user_name || `User ${comment.user_id || "Guest"}`}
-                    <span className="text-xs text-slate-400 font-normal ml-2">
+                    <span className="text-xs text-sand-400 font-normal ml-2">
                       {comment.created_at
                         ? new Date(comment.created_at).toLocaleString()
                         : "now"}
                     </span>
                   </p>
 
-                  <p className="text-sm text-slate-600 mt-1 leading-5">
+                  <p className="text-sm text-sand-600 mt-1 leading-5">
                     {comment.content}
                   </p>
 
-                  <div className="flex items-center gap-4 text-xs text-slate-500 mt-2">
-                    <button className="inline-flex items-center gap-1 hover:text-blue-600">
+                  <div className="flex items-center gap-4 text-xs text-sand-500 mt-2">
+                    <button className="inline-flex items-center gap-1 hover:text-clay-600">
                       <Heart size={13} />
                       {comment.like_count || 0}
                     </button>
 
-                    <button className="hover:text-blue-600">Reply</button>
+                    <button className="hover:text-clay-600">Reply</button>
                   </div>
                 </div>
               </div>
@@ -384,7 +384,7 @@ export default function Reader() {
 
           <button
             onClick={handleSubmitComment}
-            className="text-slate-500 hover:text-blue-600"
+            className="text-sand-500 hover:text-clay-600"
           >
             <Send size={16} />
           </button>
@@ -394,7 +394,7 @@ export default function Reader() {
             className={
               isCurrentBookmarked
                 ? "text-yellow-500"
-                : "text-slate-500 hover:text-yellow-500"
+                : "text-sand-500 hover:text-yellow-500"
             }
           >
             <Bookmark
@@ -422,14 +422,14 @@ export default function Reader() {
           onClick={() => openCommentBox(sentence)}
           className={`text-left rounded px-1 leading-7 transition ${
             active
-              ? "bg-blue-100 text-blue-800"
-              : "hover:bg-blue-50 hover:text-blue-700"
+              ? "bg-clay-100 text-clay-800"
+              : "hover:bg-clay-50 hover:text-clay-700"
           }`}
         >
           {sentence.content}
         </button>
 
-        <span className="ml-2 opacity-0 group-hover:opacity-100 text-blue-500 transition">
+        <span className="ml-2 opacity-0 group-hover:opacity-100 text-clay-500 transition">
           <MessageCircle size={14} className="inline" />
         </span>
 
@@ -439,7 +439,7 @@ export default function Reader() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f4ed] pb-28 text-slate-900">
+    <main className="min-h-screen bg-[#f7f4ed] pb-28 text-sand-900">
       <audio
         ref={audioRef}
         src={currentSong?.url || ""}
@@ -456,25 +456,25 @@ export default function Reader() {
         }}
       />
 
-      <header className="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-40">
+      <header className="h-12 bg-white border-b border-sand-200 flex items-center justify-between px-6 sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <Link
             to="/books"
-            className="w-8 h-8 rounded-full hover:bg-slate-100 grid place-items-center"
+            className="w-8 h-8 rounded-full hover:bg-sand-100 grid place-items-center"
           >
             <ArrowLeft size={17} />
           </Link>
 
           <div>
             <h1 className="text-sm font-semibold leading-4">{title}</h1>
-            <p className="text-[11px] text-slate-500">by {author}</p>
+            <p className="text-[11px] text-sand-500">by {author}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-slate-500">
+        <div className="flex items-center gap-3 text-sand-500">
           <Link
             to={`/books/${bookId}/edit`}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-100 text-slate-600"
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-sand-100 text-sand-600"
           >
             Edit
           </Link>
@@ -487,22 +487,22 @@ export default function Reader() {
         <article className="bg-[#fffdf9] border border-[#eee7da] min-h-[640px] px-8 py-10 shadow-sm relative">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-black">{title}</h2>
-            <p className="text-sm text-slate-500 mt-2">by {author}</p>
-            <p className="max-w-3xl mx-auto text-sm text-slate-500 mt-4 leading-6">
+            <p className="text-sm text-sand-500 mt-2">by {author}</p>
+            <p className="max-w-3xl mx-auto text-sm text-sand-500 mt-4 leading-6">
               {intro}
             </p>
           </div>
 
           {bookLoading || sentenceLoading ? (
-            <div className="text-center py-20 text-sm text-slate-500">
+            <div className="text-center py-20 text-sm text-sand-500">
               Loading book content from DB...
             </div>
           ) : sentences.length === 0 ? (
             <div className="text-center py-20">
-              <p className="font-bold text-slate-600">
+              <p className="font-bold text-sand-600">
                 아직 이 책에 등록된 문장이 없습니다.
               </p>
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-sm text-sand-500 mt-2">
                 Create Book 페이지에서 문장을 추가하거나 backend DB에 sentence를
                 추가하세요.
               </p>
@@ -520,27 +520,27 @@ export default function Reader() {
       </section>
 
       {toast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white border border-slate-200 shadow-xl rounded-full px-12 py-4 text-sm text-slate-500 z-50">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white border border-sand-200 shadow-xl rounded-full px-12 py-4 text-sm text-sand-500 z-50">
           {toast}
         </div>
       )}
 
       {musicPanelOpen && (
-        <div className="fixed right-6 bottom-[92px] w-[420px] max-w-[92vw] bg-white border border-slate-200 shadow-2xl rounded-2xl z-50 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="fixed right-6 bottom-[92px] w-[420px] max-w-[92vw] bg-white border border-sand-200 shadow-2xl rounded-2xl z-50 overflow-hidden">
+          <div className="px-5 py-4 border-b border-sand-100 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-black flex items-center gap-2">
                 <Music2 size={17} />
                 Playlist from DB
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-sand-400 mt-1">
                 /api/playlists 데이터와 연결됨
               </p>
             </div>
 
             <button
               onClick={() => setMusicPanelOpen(false)}
-              className="text-xs text-slate-400 hover:text-slate-700"
+              className="text-xs text-sand-400 hover:text-sand-700"
             >
               Close
             </button>
@@ -548,13 +548,13 @@ export default function Reader() {
 
           <div className="p-4">
             {musicLoading ? (
-              <p className="text-sm text-slate-500">Loading playlists...</p>
+              <p className="text-sm text-sand-500">Loading playlists...</p>
             ) : playlists.length === 0 ? (
-              <div className="rounded-xl bg-slate-50 p-5 text-center">
-                <p className="text-sm font-semibold text-slate-600">
+              <div className="rounded-xl bg-sand-50 p-5 text-center">
+                <p className="text-sm font-semibold text-sand-600">
                   No playlist yet
                 </p>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="text-xs text-sand-400 mt-2">
                   Playlists 페이지에서 먼저 playlist와 song을 추가하세요.
                 </p>
               </div>
@@ -565,7 +565,7 @@ export default function Reader() {
                   onChange={(event) =>
                     setSelectedPlaylistId(event.target.value)
                   }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none mb-4 bg-white"
+                  className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none mb-4 bg-white"
                 >
                   {playlists.map((playlist) => (
                     <option key={playlist.id} value={playlist.id}>
@@ -575,11 +575,11 @@ export default function Reader() {
                 </select>
 
                 {!selectedPlaylist || playlistSongs.length === 0 ? (
-                  <div className="rounded-xl bg-slate-50 p-5 text-center">
-                    <p className="text-sm font-semibold text-slate-600">
+                  <div className="rounded-xl bg-sand-50 p-5 text-center">
+                    <p className="text-sm font-semibold text-sand-600">
                       No songs in this playlist
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-sand-400 mt-2">
                       선택한 playlist에 아직 song이 없습니다.
                     </p>
                   </div>
@@ -591,7 +591,7 @@ export default function Reader() {
                       .map((song, index) => (
                         <div
                           key={song.id}
-                          className="rounded-xl border border-slate-100 px-4 py-3 flex items-center justify-between gap-3"
+                          className="rounded-xl border border-sand-100 px-4 py-3 flex items-center justify-between gap-3"
                         >
                           <div className="min-w-0">
                             <p className="text-[11px] font-black text-red-600">
@@ -600,7 +600,7 @@ export default function Reader() {
                             <p className="text-sm font-bold truncate">
                               {song.title}
                             </p>
-                            <p className="text-xs text-slate-500 truncate">
+                            <p className="text-xs text-sand-500 truncate">
                               {song.artist}
                             </p>
                           </div>
@@ -612,7 +612,7 @@ export default function Reader() {
                                   setSelectedPlaylistId(String(selectedPlaylist.id));
                                   handleTogglePlay();
                                 }}
-                                className="w-8 h-8 rounded-lg bg-slate-900 text-white grid place-items-center hover:bg-slate-700"
+                                className="w-8 h-8 rounded-lg bg-sand-900 text-white grid place-items-center hover:bg-sand-700"
                                 title="Play this song"
                               >
                                 <Play size={13} fill="currentColor" />
@@ -624,7 +624,7 @@ export default function Reader() {
                                 href={song.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 grid place-items-center hover:bg-blue-100"
+                                className="w-8 h-8 rounded-lg bg-clay-50 text-clay-600 grid place-items-center hover:bg-clay-100"
                                 title="Open original link"
                               >
                                 <ExternalLink size={14} />
@@ -649,8 +649,8 @@ export default function Reader() {
         </div>
       )}
 
-      <footer className="fixed left-0 right-0 bottom-0 bg-white border-t border-slate-200 h-[76px] z-40">
-        <div className="h-1.5 bg-slate-100 relative">
+      <footer className="fixed left-0 right-0 bottom-0 bg-white border-t border-sand-200 h-[76px] z-40">
+        <div className="h-1.5 bg-sand-100 relative">
           <div
             className="h-full bg-red-600 transition-all duration-300"
             style={{ width: `${musicProgress}%` }}
@@ -664,9 +664,9 @@ export default function Reader() {
         <div className="max-w-6xl mx-auto px-6 h-[70px] flex items-center justify-between">
           <button
             onClick={() => setMusicPanelOpen((prev) => !prev)}
-            className="flex items-center gap-3 w-72 text-left hover:bg-slate-50 rounded-xl px-2 py-1 transition"
+            className="flex items-center gap-3 w-72 text-left hover:bg-sand-50 rounded-xl px-2 py-1 transition"
           >
-            <div className="w-11 h-11 border border-slate-300 bg-white grid place-items-center">
+            <div className="w-11 h-11 border border-sand-300 bg-white grid place-items-center">
               <Music2 size={20} />
             </div>
 
@@ -680,7 +680,7 @@ export default function Reader() {
                   ? selectedPlaylist.title
                   : "No playlist"}
               </p>
-              <p className="text-[11px] text-slate-500 truncate">
+              <p className="text-[11px] text-sand-500 truncate">
                 {currentSong
                   ? `${currentSong.artist} · ${
                       isPlaying ? "Playing" : "Paused"
@@ -692,13 +692,13 @@ export default function Reader() {
             </div>
           </button>
 
-          <div className="flex items-center gap-4 text-slate-700">
+          <div className="flex items-center gap-4 text-sand-700">
             <SkipBack size={16} />
 
             <button
               onClick={handleTogglePlay}
               className={`w-9 h-9 rounded-full text-white grid place-items-center ${
-                isPlaying ? "bg-red-600" : "bg-slate-900"
+                isPlaying ? "bg-red-600" : "bg-sand-900"
               }`}
             >
               {isPlaying ? (
@@ -712,20 +712,20 @@ export default function Reader() {
             <Volume2 size={16} />
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-slate-500 w-9 text-right">
+              <span className="text-[11px] text-sand-500 w-9 text-right">
                 {formatTime(currentTime)}
               </span>
 
-              <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div className="w-24 h-2 bg-sand-200 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all duration-300 ${
-                    isPlaying ? "bg-red-600" : "bg-slate-900"
+                    isPlaying ? "bg-red-600" : "bg-sand-900"
                   }`}
                   style={{ width: `${musicProgress}%` }}
                 />
               </div>
 
-              <span className="text-[11px] text-slate-500 w-9">
+              <span className="text-[11px] text-sand-500 w-9">
                 {formatTime(duration)}
               </span>
             </div>

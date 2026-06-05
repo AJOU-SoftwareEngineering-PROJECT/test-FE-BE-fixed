@@ -66,23 +66,23 @@ export default function Authors() {
         />
 
         <div className="mb-5">
-          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs bg-emerald-50 text-emerald-600">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs bg-clay-50 text-clay-600">
+            <span className="w-2 h-2 rounded-full bg-clay-500" />
             {message}
           </span>
         </div>
 
         {loading ? (
-          <div className="card p-8 text-sm text-slate-500">
+          <div className="card p-8 text-sm text-sand-500">
             작가 목록을 불러오는 중입니다...
           </div>
         ) : authors.length === 0 ? (
           <div className="card p-10 text-center">
-            <UserRound size={44} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="font-black text-slate-700">
+            <UserRound size={44} className="mx-auto text-sand-300 mb-4" />
+            <h3 className="font-black text-sand-700">
               아직 등록된 작가가 없습니다.
             </h3>
-            <p className="text-sm text-slate-500 mt-2">
+            <p className="text-sm text-sand-500 mt-2">
               New Author 버튼을 눌러 작가를 추가하세요.
             </p>
           </div>
@@ -92,23 +92,23 @@ export default function Authors() {
               <div key={author.id} className="card p-6">
                 <div className="flex items-start justify-between gap-4">
                   <Link to={`/authors/${author.id}`} className="flex-1">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center mb-4">
                       <UserRound size={24} />
                     </div>
 
-                    <h3 className="font-black text-slate-900">
+                    <h3 className="font-black text-sand-900">
                       {author.name}
                     </h3>
 
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-sand-500 mt-1">
                       {author.email}
                     </p>
 
-                    <p className="text-sm text-slate-600 mt-3 line-clamp-3 leading-6">
+                    <p className="text-sm text-sand-600 mt-3 line-clamp-3 leading-6">
                       {author.intro || "No introduction."}
                     </p>
 
-                    <div className="flex items-center gap-4 text-xs text-slate-500 mt-4">
+                    <div className="flex items-center gap-4 text-xs text-sand-500 mt-4">
                       <span>{author.gender}</span>
                       <span>{author.age} years old</span>
                       <span className="inline-flex items-center gap-1">

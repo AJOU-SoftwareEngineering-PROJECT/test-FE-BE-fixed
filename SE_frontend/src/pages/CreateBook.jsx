@@ -77,13 +77,13 @@ export default function CreateBook() {
 
         <form onSubmit={handleSubmit} className="card p-6 mt-6 space-y-5">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-clay-50 text-clay-600 flex items-center justify-center">
               <BookOpen size={22} />
             </div>
 
             <div>
               <h3 className="font-black">Book Information</h3>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-sand-500">
                 입력한 내용은 backend database에 저장됩니다.
               </p>
             </div>
@@ -96,46 +96,46 @@ export default function CreateBook() {
           )}
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Book Title
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               placeholder="Example: Rich Dad Poor Dad"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Author Name
             </label>
             <input
               name="author_name"
               value={form.author_name}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               placeholder="Example: Robert Kiyosaki"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Author Email
             </label>
             <input
               name="author_email"
               value={form.author_email}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
               placeholder="Optional: author@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Introduction
             </label>
             <textarea
@@ -143,13 +143,13 @@ export default function CreateBook() {
               value={form.intro}
               onChange={handleChange}
               rows={4}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 resize-none"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 resize-none"
               placeholder="Write a short introduction of the book."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="block text-sm font-bold text-sand-700 mb-2">
               Sentences
             </label>
             <textarea
@@ -157,10 +157,10 @@ export default function CreateBook() {
               value={form.sentencesText}
               onChange={handleChange}
               rows={10}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 resize-none"
+              className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 resize-none"
               placeholder={`Write one sentence per line.\nMoney is not just something people earn and spend.\nAssets put money into your pocket.\nFinancial freedom begins with financial education.`}
             />
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-sand-400 mt-2">
               한 줄이 하나의 문장으로 저장됩니다.
             </p>
           </div>
@@ -169,7 +169,7 @@ export default function CreateBook() {
             <button
               type="button"
               onClick={() => navigate("/books")}
-              className="px-5 py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50"
+              className="px-5 py-3 rounded-xl border border-sand-200 text-sm font-bold text-sand-600 hover:bg-sand-50"
             >
               Cancel
             </button>

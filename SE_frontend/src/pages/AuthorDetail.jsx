@@ -96,7 +96,7 @@ export default function AuthorDetail() {
     return (
       <PageShell>
         <main className="p-5 md:p-8 max-w-7xl mx-auto">
-          <div className="card p-8 text-sm text-slate-500">
+          <div className="card p-8 text-sm text-sand-500">
             작가 정보를 불러오는 중입니다...
           </div>
         </main>
@@ -109,13 +109,13 @@ export default function AuthorDetail() {
       <PageShell>
         <main className="p-5 md:p-8 max-w-7xl mx-auto">
           <div className="card p-10 text-center">
-            <UserRound size={44} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="font-black text-slate-700">
+            <UserRound size={44} className="mx-auto text-sand-300 mb-4" />
+            <h3 className="font-black text-sand-700">
               작가를 찾을 수 없습니다.
             </h3>
             <Link
               to="/authors"
-              className="inline-flex mt-4 text-sm font-bold text-blue-600"
+              className="inline-flex mt-4 text-sm font-bold text-clay-600"
             >
               Back to Authors
             </Link>
@@ -135,7 +135,7 @@ export default function AuthorDetail() {
             <div className="flex items-center gap-3">
               <Link
                 to="/authors"
-                className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-blue-600"
+                className="inline-flex items-center gap-2 text-sm font-bold text-sand-600 hover:text-clay-600"
               >
                 <ArrowLeft size={16} />
                 Back
@@ -161,16 +161,16 @@ export default function AuthorDetail() {
 
           {!editing ? (
             <div className="flex items-start gap-5">
-              <div className="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-3xl bg-clay-50 text-clay-600 flex items-center justify-center">
                 <UserRound size={32} />
               </div>
 
               <div className="flex-1">
-                <h2 className="text-2xl font-black text-slate-900">
+                <h2 className="text-2xl font-black text-sand-900">
                   {author.name}
                 </h2>
 
-                <div className="flex flex-wrap gap-4 text-sm text-slate-500 mt-2">
+                <div className="flex flex-wrap gap-4 text-sm text-sand-500 mt-2">
                   <span>{author.gender}</span>
                   <span>{author.age} years old</span>
                   <span className="inline-flex items-center gap-1">
@@ -179,7 +179,7 @@ export default function AuthorDetail() {
                   </span>
                 </div>
 
-                <p className="text-sm text-slate-600 mt-4 leading-6">
+                <p className="text-sm text-sand-600 mt-4 leading-6">
                   {author.intro || "No introduction."}
                 </p>
               </div>
@@ -187,27 +187,27 @@ export default function AuthorDetail() {
           ) : (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="block text-sm font-bold text-sand-700 mb-2">
                   Author Name
                 </label>
                 <input
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="block text-sm font-bold text-sand-700 mb-2">
                     Gender
                   </label>
                   <select
                     name="gender"
                     value={form.gender}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+                    className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 bg-white"
                   >
                     <option value="MALE">MALE</option>
                     <option value="FEMALE">FEMALE</option>
@@ -215,7 +215,7 @@ export default function AuthorDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="block text-sm font-bold text-sand-700 mb-2">
                     Age
                   </label>
                   <input
@@ -223,25 +223,25 @@ export default function AuthorDetail() {
                     type="number"
                     value={form.age}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="block text-sm font-bold text-sand-700 mb-2">
                   Email
                 </label>
                 <input
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="block text-sm font-bold text-sand-700 mb-2">
                   Introduction
                 </label>
                 <textarea
@@ -249,7 +249,7 @@ export default function AuthorDetail() {
                   value={form.intro}
                   onChange={handleChange}
                   rows={5}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100 resize-none"
+                  className="w-full rounded-xl border border-sand-200 px-4 py-3 outline-none focus:ring-2 focus:ring-clay-100 resize-none"
                 />
               </div>
 
@@ -269,12 +269,12 @@ export default function AuthorDetail() {
 
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <BookOpen size={20} className="text-blue-600" />
+            <BookOpen size={20} className="text-clay-600" />
             <h3 className="font-black text-lg">Books by {author.name}</h3>
           </div>
 
           {author.books.length === 0 ? (
-            <div className="card p-8 text-sm text-slate-500">
+            <div className="card p-8 text-sm text-sand-500">
               이 작가가 등록한 책이 없습니다.
             </div>
           ) : (

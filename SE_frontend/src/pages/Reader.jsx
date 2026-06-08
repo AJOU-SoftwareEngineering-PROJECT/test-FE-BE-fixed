@@ -3,11 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Bookmark,
-  ExternalLink,
   Heart,
   Menu,
   MessageCircle,
-  MoreVertical,
   Music2,
   Pause,
   Play,
@@ -23,9 +21,8 @@ import {
   getBook,
   getBookSentences,
   getSentenceComments,
-  getPlaylists,
-  likePlaylistSong,
 } from "../services/api";
+import BookBGMPanel from "../components/BookBGMPanel";
 
 const emptyBook = {
   id: null,
@@ -53,11 +50,9 @@ export default function Reader() {
   const [bookLoading, setBookLoading] = useState(true);
   const [sentenceLoading, setSentenceLoading] = useState(true);
 
-  const [playlists, setPlaylists] = useState([]);
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
-  const [musicLoading, setMusicLoading] = useState(true);
-  const [musicPanelOpen, setMusicPanelOpen] = useState(false);
-
+  // ── Book BGM 패널
+  const [bgmPanelOpen, setBgmPanelOpen] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -65,7 +60,6 @@ export default function Reader() {
   useEffect(() => {
     loadBook();
     loadSentences();
-    loadPlaylistsFromDB();
   }, [bookId]);
 
   const loadBook = () => {
@@ -111,31 +105,6 @@ export default function Reader() {
       });
   };
 
-  const loadPlaylistsFromDB = () => {
-    setMusicLoading(true);
-
-    getPlaylists()
-      .then((data) => {
-        const items = Array.isArray(data) ? data : [];
-
-        setPlaylists(items);
-
-        if (items.length > 0) {
-          setSelectedPlaylistId((prev) => prev || String(items[0].id));
-        } else {
-          setSelectedPlaylistId("");
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to load playlists from DB:", error);
-        setPlaylists([]);
-        setSelectedPlaylistId("");
-      })
-      .finally(() => {
-        setMusicLoading(false);
-      });
-  };
-
   useEffect(() => {
     if (!selectedSentence?.id) return;
 
@@ -162,17 +131,6 @@ export default function Reader() {
     };
   }, [sentences]);
 
-  const selectedPlaylist = useMemo(() => {
-    return (
-      playlists.find(
-        (playlist) => String(playlist.id) === String(selectedPlaylistId)
-      ) || null
-    );
-  }, [playlists, selectedPlaylistId]);
-
-  const playlistSongs = selectedPlaylist?.songs || [];
-  const currentSong = playlistSongs.length > 0 ? playlistSongs[0] : null;
-
   const title = book?.name || "Untitled Book";
   const author = book?.author_name || "Unknown Author";
   const intro = book?.intro || "No introduction.";
@@ -180,6 +138,7 @@ export default function Reader() {
   const musicProgress =
     duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
 
+  // ── 현재 곡이 변경되면 audio src 업데이트
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
@@ -187,7 +146,7 @@ export default function Reader() {
 
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+      audioRef.current.src = currentSong?.url || "";
       audioRef.current.load();
     }
   }, [currentSong?.id, currentSong?.url]);
@@ -261,25 +220,14 @@ export default function Reader() {
     }
   };
 
-  const handleLikeMusic = async (songId) => {
-    try {
-      await likePlaylistSong(songId);
-      loadPlaylistsFromDB();
-      showToast("Music liked.");
-    } catch (error) {
-      console.error("Music like failed:", error);
-      showToast("Music like failed.");
-    }
-  };
-
+  // ── 하단 플레이어 재생/일시정지 토글
   const handleTogglePlay = async () => {
     if (!currentSong?.url) {
-      setMusicPanelOpen(true);
+      setBgmPanelOpen(true);
       return;
     }
 
     const audio = audioRef.current;
-
     if (!audio) return;
 
     try {
@@ -292,7 +240,7 @@ export default function Reader() {
       }
     } catch (error) {
       console.error("Audio play failed:", error);
-      setMusicPanelOpen(true);
+      setBgmPanelOpen(true);
       showToast("Audio play failed.");
     }
   };
@@ -479,6 +427,19 @@ export default function Reader() {
             Edit
           </Link>
           <Search size={16} />
+          {/* Book BGM 버튼 */}
+          <button
+            id="book-bgm-toggle"
+            onClick={() => setBgmPanelOpen((prev) => !prev)}
+            className={`w-8 h-8 rounded-full grid place-items-center transition ${
+              bgmPanelOpen
+                ? "bg-clay-600 text-white"
+                : "hover:bg-sand-100 text-sand-500"
+            }`}
+            title="Book BGM 패널"
+          >
+            <Music2 size={17} />
+          </button>
           <Menu size={17} />
         </div>
       </header>
@@ -525,130 +486,21 @@ export default function Reader() {
         </div>
       )}
 
-      {musicPanelOpen && (
-        <div className="fixed right-6 bottom-[92px] w-[420px] max-w-[92vw] bg-white border border-sand-200 shadow-2xl rounded-2xl z-50 overflow-hidden">
-          <div className="px-5 py-4 border-b border-sand-100 flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-black flex items-center gap-2">
-                <Music2 size={17} />
-                Playlist from DB
-              </h3>
-              <p className="text-xs text-sand-400 mt-1">
-                /api/playlists 데이터와 연결됨
-              </p>
-            </div>
-
-            <button
-              onClick={() => setMusicPanelOpen(false)}
-              className="text-xs text-sand-400 hover:text-sand-700"
-            >
-              Close
-            </button>
-          </div>
-
-          <div className="p-4">
-            {musicLoading ? (
-              <p className="text-sm text-sand-500">Loading playlists...</p>
-            ) : playlists.length === 0 ? (
-              <div className="rounded-xl bg-sand-50 p-5 text-center">
-                <p className="text-sm font-semibold text-sand-600">
-                  No playlist yet
-                </p>
-                <p className="text-xs text-sand-400 mt-2">
-                  Playlists 페이지에서 먼저 playlist와 song을 추가하세요.
-                </p>
-              </div>
-            ) : (
-              <>
-                <select
-                  value={selectedPlaylistId}
-                  onChange={(event) =>
-                    setSelectedPlaylistId(event.target.value)
-                  }
-                  className="w-full rounded-xl border border-sand-200 px-4 py-3 text-sm outline-none mb-4 bg-white"
-                >
-                  {playlists.map((playlist) => (
-                    <option key={playlist.id} value={playlist.id}>
-                      {playlist.title} ({playlist.song_count || 0})
-                    </option>
-                  ))}
-                </select>
-
-                {!selectedPlaylist || playlistSongs.length === 0 ? (
-                  <div className="rounded-xl bg-sand-50 p-5 text-center">
-                    <p className="text-sm font-semibold text-sand-600">
-                      No songs in this playlist
-                    </p>
-                    <p className="text-xs text-sand-400 mt-2">
-                      선택한 playlist에 아직 song이 없습니다.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2 max-h-72 overflow-y-auto">
-                    {playlistSongs
-                      .slice()
-                      .sort((a, b) => b.like_count - a.like_count)
-                      .map((song, index) => (
-                        <div
-                          key={song.id}
-                          className="rounded-xl border border-sand-100 px-4 py-3 flex items-center justify-between gap-3"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-[11px] font-black text-red-600">
-                              #{index + 1}
-                            </p>
-                            <p className="text-sm font-bold truncate">
-                              {song.title}
-                            </p>
-                            <p className="text-xs text-sand-500 truncate">
-                              {song.artist}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-2 shrink-0">
-                            {song.url && (
-                              <button
-                                onClick={() => {
-                                  setSelectedPlaylistId(String(selectedPlaylist.id));
-                                  handleTogglePlay();
-                                }}
-                                className="w-8 h-8 rounded-lg bg-sand-900 text-white grid place-items-center hover:bg-sand-700"
-                                title="Play this song"
-                              >
-                                <Play size={13} fill="currentColor" />
-                              </button>
-                            )}
-
-                            {song.url && (
-                              <a
-                                href={song.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="w-8 h-8 rounded-lg bg-clay-50 text-clay-600 grid place-items-center hover:bg-clay-100"
-                                title="Open original link"
-                              >
-                                <ExternalLink size={14} />
-                              </a>
-                            )}
-
-                            <button
-                              onClick={() => handleLikeMusic(song.id)}
-                              className="inline-flex items-center gap-1 rounded-lg bg-red-50 text-red-600 px-2 py-2 text-xs font-bold hover:bg-red-100"
-                            >
-                              <Heart size={13} />
-                              {song.like_count || 0}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
+      {/* ── Book BGM 우측 슬라이드 패널 */}
+      {bgmPanelOpen && (
+        <BookBGMPanel
+          bookId={bookId}
+          bookTitle={title}
+          onClose={() => setBgmPanelOpen(false)}
+          audioRef={audioRef}
+          currentSong={currentSong}
+          setCurrentSong={setCurrentSong}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+        />
       )}
 
+      {/* ── 하단 고정 플레이어 */}
       <footer className="fixed left-0 right-0 bottom-0 bg-white border-t border-sand-200 h-[76px] z-40">
         <div className="h-1.5 bg-sand-100 relative">
           <div
@@ -662,40 +514,42 @@ export default function Reader() {
         </div>
 
         <div className="max-w-6xl mx-auto px-6 h-[70px] flex items-center justify-between">
+          {/* 현재 곡 정보 */}
           <button
-            onClick={() => setMusicPanelOpen((prev) => !prev)}
+            id="reader-bgm-footer-btn"
+            onClick={() => setBgmPanelOpen((prev) => !prev)}
             className="flex items-center gap-3 w-72 text-left hover:bg-sand-50 rounded-xl px-2 py-1 transition"
           >
-            <div className="w-11 h-11 border border-sand-300 bg-white grid place-items-center">
+            <div
+              className={`w-11 h-11 border grid place-items-center transition ${
+                isPlaying
+                  ? "border-clay-300 bg-clay-50 text-clay-600"
+                  : "border-sand-300 bg-white"
+              }`}
+            >
               <Music2 size={20} />
             </div>
 
             <div className="min-w-0">
               <p className="text-xs font-semibold truncate">
-                {musicLoading
-                  ? "Loading playlist..."
-                  : currentSong
+                {currentSong
                   ? currentSong.title
-                  : selectedPlaylist
-                  ? selectedPlaylist.title
-                  : "No playlist"}
+                  : "Book BGM"}
               </p>
               <p className="text-[11px] text-sand-500 truncate">
                 {currentSong
-                  ? `${currentSong.artist} · ${
-                      isPlaying ? "Playing" : "Paused"
-                    }`
-                  : playlists.length > 0
-                  ? "Click to choose music"
-                  : "Add songs in Playlists page"}
+                  ? `${currentSong.artist} · ${isPlaying ? "재생 중" : "일시정지"}`
+                  : "클릭해서 이 책의 BGM 열기"}
               </p>
             </div>
           </button>
 
+          {/* 컨트롤 */}
           <div className="flex items-center gap-4 text-sand-700">
             <SkipBack size={16} />
 
             <button
+              id="reader-play-btn"
               onClick={handleTogglePlay}
               className={`w-9 h-9 rounded-full text-white grid place-items-center ${
                 isPlaying ? "bg-red-600" : "bg-sand-900"
@@ -730,11 +584,9 @@ export default function Reader() {
               </span>
             </div>
 
-            <button onClick={() => setMusicPanelOpen((prev) => !prev)}>
+            <button onClick={() => setBgmPanelOpen((prev) => !prev)}>
               <Menu size={16} />
             </button>
-
-            <MoreVertical size={16} />
           </div>
         </div>
       </footer>

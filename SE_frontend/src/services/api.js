@@ -214,6 +214,24 @@ export function deletePlaylist(playlistId) {
     method: "DELETE",
   });
 }
+
+/* Book Playlists (책 전용 플레이리스트) */
+export function getBookPlaylists(bookId) {
+  return request(`/api/books/${bookId}/playlists`);
+}
+
+export function createBookPlaylist(bookId, data) {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
+  return request(`/api/books/${bookId}/playlists`, {
+    method: "POST",
+    body: JSON.stringify({
+      title: data.title,
+      description: data.description || "",
+      creator_name: currentUser.name || "Guest User",
+    }),
+  });
+}
 /* Music Search API */
 export function searchMusic(keyword) {
   return request(`/api/music/search?q=${encodeURIComponent(keyword)}&limit=10`);

@@ -6,7 +6,7 @@ from urllib.request import urlopen, Request
 import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func, text
 from sqlalchemy.orm import Session
 
 from db.database import Base, engine, get_db
@@ -47,6 +47,7 @@ class FrontPlaylist(Base):
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     creator_name = Column(String(100), nullable=False, default="Guest User")
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
 
@@ -262,6 +263,7 @@ class FrontPlaylistCreate(BaseModel):
     title: str
     description: Optional[str] = ""
     creator_name: str = "Guest User"
+    book_id: Optional[int] = None
 
 
 class FrontPlaylistSongCreate(BaseModel):
@@ -287,6 +289,7 @@ class FrontPlaylistResponse(BaseModel):
     title: str
     description: Optional[str] = None
     creator_name: str
+    book_id: Optional[int] = None
     song_count: int = 0
     total_likes: int = 0
     created_at: datetime
@@ -1124,6 +1127,7 @@ def make_playlist_response(playlist: FrontPlaylist, db: Session):
         "title": playlist.title,
         "description": playlist.description,
         "creator_name": playlist.creator_name,
+        "book_id": playlist.book_id,
         "song_count": len(songs),
         "total_likes": total_likes,
         "created_at": playlist.created_at,
@@ -1157,6 +1161,7 @@ def create_playlist(dto: FrontPlaylistCreate, db: Session = Depends(get_db)):
         title=title,
         description=dto.description or "",
         creator_name=dto.creator_name or "Guest User",
+        book_id=dto.book_id,
     )
 
     db.add(playlist)
@@ -1264,6 +1269,63 @@ def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Playlist deleted"}
+
+
+# =========================
+# Book Playlists
+# =========================
+
+@router.get("/books/{book_id}/playlists", response_model=list[FrontPlaylistResponse])
+def get_book_playlists(book_id: int, db: Session = Depends(get_db)):
+    book = db.query(Book).filter(Book.id == book_id).first()
+
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    playlists = (
+        db.query(FrontPlaylist)
+        .filter(FrontPlaylist.book_id == book_id)
+        .order_by(FrontPlaylist.created_at.desc())
+        .all()
+    )
+
+    return [make_playlist_response(playlist, db) for playlist in playlists]
+
+
+@router.post(
+    "/books/{book_id}/playlists",
+    response_model=FrontPlaylistResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_book_playlist(
+    book_id: int,
+    dto: FrontPlaylistCreate,
+    db: Session = Depends(get_db),
+):
+    book = db.query(Book).filter(Book.id == book_id).first()
+
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    title = dto.title.strip()
+
+    if not title:
+        raise HTTPException(status_code=400, detail="Playlist title is required")
+
+    playlist = FrontPlaylist(
+        title=title,
+        description=dto.description or "",
+        creator_name=dto.creator_name or "Guest User",
+        book_id=book_id,
+    )
+
+    db.add(playlist)
+    db.commit()
+    db.refresh(playlist)
+
+    return make_playlist_response(playlist, db)
+
+
 # =========================
 # Dashboard
 # =========================
@@ -1378,4 +1440,17 @@ def get_dashboard(db: Session = Depends(get_db)):
     }
 
 
+def migrate_book_id_column():
+    """기존 frontend_playlists 테이블에 book_id 컬럼이 없으면 추가합니다."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text(
+                "ALTER TABLE frontend_playlists ADD COLUMN book_id INTEGER REFERENCES books(id)"
+            ))
+            conn.commit()
+    except Exception:
+        pass  # 이미 컬럼이 존재하면 무시
+
+
 create_frontend_tables()
+migrate_book_id_column()
